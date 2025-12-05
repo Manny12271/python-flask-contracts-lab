@@ -1,32 +1,35 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request, current_app, g, make_response, jsonify
+from flask import Flask
 
+# Sample contract data
 contracts = [
     {"id": 1, "contract_information": "This contract is for John and building a shed"},
     {"id": 2, "contract_information": "This contract is for a deck for a buisiness"},
     {"id": 3, "contract_information": "This contract is to confirm ownership of this car"}
 ]
 
+# Sample customer data
 customers = ["bob", "bill", "john", "sarah"]
 
 app = Flask(__name__)
 
+# -----------------------------------------------------
+# /contract/<id>  → return contract info as string
+# -----------------------------------------------------
 
-# -----------------------------------------------------
-# /contract/<id>  → return contract info or 404
-# -----------------------------------------------------
+
 @app.route("/contract/<int:id>")
 def get_contract(id):
     """
-    Returns contract information if the ID matches.
-    If not found → 404 response.
+    Returns contract information string if the ID matches.
+    If not found → 404 response with plain text.
     """
     for contract in contracts:
         if contract["id"] == id:
-            return jsonify(contract), 200
+            return contract["contract_information"], 200
 
-    return jsonify({"error": "Contract not found"}), 404
+    return "Contract not found", 404
 
 
 # -----------------------------------------------------
@@ -36,13 +39,13 @@ def get_contract(id):
 def get_customer(customer_name):
     """
     Confirms a customer exists without returning sensitive data.
-    If found → return 204 (No Content).
-    If not found → return 404.
+    If found → return 204 (No Content)
+    If not found → 404
     """
     if customer_name.lower() in customers:
         return "", 204
 
-    return jsonify({"error": "Customer not found"}), 404
+    return "Customer not found", 404
 
 
 if __name__ == '__main__':
